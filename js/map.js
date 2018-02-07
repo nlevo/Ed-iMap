@@ -27,17 +27,21 @@ var map = AmCharts.makeChart("chartdiv", {
       // Ignore any click not on area
       if (e.mapObject.objectType !== "MapArea")
         return;
-      e.mapObject.selectedColorReal = selectColorBasedOnUserAnswer(e.mapObject);
-
+      var x = isAnswerCorrect(e);
+    
+       // e.mapObject.selectedColorReal = selectColorBasedOnUserAnswer(e.mapObject);
+      
       var area = e.mapObject;
-      console.log(area);
+      //console.log(area);
       
       // Toggle showAsSelected
       area.showAsSelected = !area.showAsSelected;
       e.chart.returnInitialColor(area);
+      console.log(area);
       
       // Update the list
       //document.getElementById("selected").innerHTML = JSON.stringify(getSelectedCountries());
+      setTimeout(createQuestion(), 2000);
     }
   }]
 });
@@ -46,6 +50,22 @@ var map = AmCharts.makeChart("chartdiv", {
  * Function which extracts currently selected country list.
  * Returns array consisting of country ISO2 codes
  */
+
+ function isAnswerCorrect(e){
+    if(e.mapObject.enTitle.toUpperCase() === answer && userTry === 1){
+        e.mapObject.selectedColorReal = "green"; 
+        return true;
+    }
+    else if(e.mapObject.enTitle.toUpperCase() === correctAnswer && userTry > 1) {
+        e.mapObject.selectedColorReal = "yellow";
+        return true;
+    }
+    else {
+        e.mapObject.selectedColorReal = "red";
+        return false;
+    } 
+ }
+
 function getSelectedCountries() {
   var selected = [];
   for(var i = 0; i < map.dataProvider.areas.length; i++) {
@@ -56,7 +76,7 @@ function getSelectedCountries() {
 }
 
 function selectColorBasedOnUserAnswer(object){
-    if(object.enTitle === correctAnswer && userTry === 1){
+    if(object.enTitle.toUpperCase() === answer && userTry === 1){
         return "green"; 
     }
     else if(object.enTitle === correctAnswer && userTry > 1) {
@@ -71,22 +91,17 @@ var correctAnswer = "Florida";
 var userTry = 1;
 
 function restartMap (){ 
-//     var selected = [];
-//   for(var i = 0; i < map.dataProvider.areas.length; i++) {
-//     map.dataProvider.areas[i].showAsSelected = false
-//       selected.push(map.dataProvider.areas[i].id);
-//   }
-var area = map.getObjectById("US");
-console.log(area);
-area.color = '#' + "ffffff";
-area.colorReal = area.color;
+
+//unselects every map/state/region, thus color goes to default   
+var area = map.dataProvider.areas;
+area.forEach(element => {
+    element.showAsSelected = false;
+});
 
 // make the chart take in new color
-area.validate();
+map.validateNow();
   return "Done"
 }
-
-
 
 // var map = AmCharts.makeChart( "chartdiv", {
 //     "type": "map",
