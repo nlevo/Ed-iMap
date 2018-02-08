@@ -42,7 +42,6 @@ var map = AmCharts.makeChart("chartdiv", {
         var area = e.mapObject;
         area.showAsSelected = !area.showAsSelected;
         e.chart.returnInitialColor(area);
-        console.log(area);
         setTimeout(createQuestion, 500);
        }
       
@@ -62,6 +61,7 @@ var map = AmCharts.makeChart("chartdiv", {
     if(e.mapObject.enTitle.toUpperCase() === game.answer && userTry === 1){
         e.mapObject.selectedColorReal = "green";
         game.correctAnswer++;
+        $('#questions-stat').text("" + game.correctAnswer + "\/" + game.maxQuestions);
         return true;
     }
     else if(e.mapObject.enTitle.toUpperCase() === correctAnswer && userTry > 1) {
@@ -86,6 +86,7 @@ function getSelectedCountries() {
 
 function selectColorBasedOnUserAnswer(object){
     if(object.enTitle.toUpperCase() === answer && userTry === 1){
+        $('#questions-stat').text('Test');
         return "green"; 
     }
     else if(object.enTitle === correctAnswer && userTry > 1) {

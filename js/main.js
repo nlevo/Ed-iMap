@@ -83,7 +83,7 @@ window.onclick = function(event) {
 //SKIP QUESTION
 $('#skip').click(function(e){
     createQuestion();
-    
+    game.skippedQuestions++;
     game.questionCounter--;
 })
 
@@ -123,9 +123,10 @@ $('#btn-start').click(function(e){
     //set progresss bar - default
     $('#progress-bar-initial').text("0%");
     $('#progress-bar-initial').attr("style", "width:3%");
+    $('#questions-stat').text("" + game.correctAnswer + "\/" + game.maxQuestions);
+    $('.game-stats').hide();
     
     game.gameOn = true;
-    console.log(map.areasSettings.selectable);
     $('#top-start').hide();
     $('#top-info').removeClass("d-none");
     $('#progress-bar').removeClass("d-none");
@@ -151,7 +152,6 @@ function quitGame(){
 
 //CREATE A QUESTION
 function Game(array) {
-    console.log(array);
     this.answer = '';
     this.maxQuestions = 20;
     this.questionCounter = 0;
@@ -160,6 +160,7 @@ function Game(array) {
     this.points = 0;
     this.dataArray = [];
     this.gameOn = false;
+    this.skippedQuestions = 0;
     
     if (array) {
         this.dataArray = array.slice(0);
@@ -199,13 +200,24 @@ function createQuestion(){
 
 function checkIfGameOver(){
     if(game.maxQuestions <= game.questionCounter-1 || game.dataArray.length === 0 ){
+        $('.game-stats').show();
+        var ratio = (100/(game.maxQuestions+game.skippedQuestions)).toFixed(2);
         
-        console.log("Correct" + game.correctAnswer);
-        console.log("Incorrect" + game.incorrectAnswer);
+        //update final stats bars
+        $('#correct').text("Correct " + (ratio*(game.correctAnswer)).toFixed(2) + "%");
+        $('#correct').attr("style", "width:" + (ratio*game.correctAnswer).toFixed(2) + "%");
+        $('#skipped').text("Skipped " + (ratio*(game.skippedQuestions)).toFixed(2) + "%");
+        $('#skipped').attr("style", "width:" + (ratio*game.skippedQuestions).toFixed(2) + "%");
+        $('#incorrect').text("Incorrect " + (ratio*(game.incorrectAnswer)).toFixed(2) + "%");
+        $('#incorrect').attr("style", "width:" + (ratio*game.incorrectAnswer).toFixed(2) + "%");
+        
+        //hide progress bar
+        $('#progress-bar-initial').hide();
+
         $('#question p').remove();
         restartMap();
-        quitGame();
-        alert("Game is over");
+        //quitGame();
+        //alert("Game is over");
     }
 }
 

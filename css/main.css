@@ -79,12 +79,23 @@ body{
 }
 
 #skip{
+    display: flex;
     background-color: inherit;
     border: none;
+    align-self: flex-end;
 
 }
 
 #skip:hover{
-    background-color: #ED0036;
+    background-color: #FFC200;
 
 }
+
+#test {
+    display: flex !important;
+    /* background-color: red; */
+    /* height: 615px; */
+    align-items: center;
+    justify-content: center;
+}
+
