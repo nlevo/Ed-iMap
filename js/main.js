@@ -135,6 +135,7 @@ $('#btn-start').click(function(e){
     //display current game MODE in the question box
     $('#question h3').text(document.getElementById('top-start').childNodes[7].getElementsByClassName('btn')[0].textContent);    
     createQuestion();
+    setStartBtn();
     
 })
 // QUIT button event
@@ -161,7 +162,9 @@ function Game(array) {
     this.dataArray = [];
     this.gameOn = false;
     this.skippedQuestions = 0;
-    
+    this.intervalId = 0;
+    this.currentTime = 0;
+
     if (array) {
         this.dataArray = array.slice(0);
     }
@@ -170,14 +173,11 @@ function Game(array) {
     };
 }
 
+
 //update 
 
-
-
 var game = new Game(usStates);
-
-var answer = '';
-var maxQuestions = 20;
+var onOff;
 
 function createQuestion(){
     var ratio = Math.floor(100/game.maxQuestions);
@@ -202,7 +202,8 @@ function checkIfGameOver(){
     if(game.maxQuestions <= game.questionCounter-1 || game.dataArray.length === 0 ){
         $('.game-stats').show();
         var ratio = (100/(game.maxQuestions+game.skippedQuestions)).toFixed(2);
-        
+        game.stopClick();
+        setStopBtn();
         //update final stats bars
         $('#correct').text("Correct " + (ratio*(game.correctAnswer)).toFixed(2) + "%");
         $('#correct').attr("style", "width:" + (ratio*game.correctAnswer).toFixed(2) + "%");
@@ -221,4 +222,57 @@ function checkIfGameOver(){
     }
 }
 
+// Constructor prototype
 
+Game.prototype.startClick = function () {
+    var that = this;
+    this.intervalId = setInterval(function () {
+        that.currentTime ++;
+      }, 1000);
+};
+
+Game.prototype.setMinutes = function () {
+    return Math.floor(this.currentTime / 60);
+};
+
+Game.prototype.setSeconds = function () {
+    return this.currentTime - (this.setMinutes() * 60)
+};
+
+Game.prototype.twoDigitsNumber = function (value) {
+    if(value < 10)
+        return ('0' + value.toString());
+    else
+        return value.toString();
+};
+
+Game.prototype.setTime = function () {
+    var minutes = this.twoDigitsNumber(this.setMinutes());
+    var seconds = this.twoDigitsNumber(this.setSeconds());
+    return (minutes).toString() + ":" + (seconds).toString();
+};
+
+Game.prototype.stopClick = function () {
+    clearInterval(this.intervalId);
+};
+
+Game.prototype.resetClick = function () {
+    this.currentTime = 0;
+};
+
+
+function printTime(selector) {
+    $('#time').text("Time: " + game.setTime() + " sec");
+}
+
+function setStopBtn() {
+    game.stopClick();
+    clearInterval(onOff);
+}
+
+function setStartBtn() {
+    game.startClick();
+    onOff = setInterval(function () {
+        printTime();
+      }, 10);
+};
