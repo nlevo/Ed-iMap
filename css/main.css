@@ -78,7 +78,13 @@ body{
     width: 150px !important;
 }
 
+#skip{
+    background-color: inherit;
+    border: none;
+
+}
+
 #skip:hover{
-    background-color: aquamarine;
+    background-color: #ED0036;
 
 }

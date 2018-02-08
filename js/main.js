@@ -80,6 +80,13 @@ window.onclick = function(event) {
     }
 }
 
+//SKIP QUESTION
+$('#skip').click(function(e){
+    createQuestion();
+    
+    game.questionCounter--;
+})
+
 
 
 //updates button based on user selection (works for Choose DIFFUCULTY, Choose MODE and Choose MAP buttons ONLY)
@@ -112,6 +119,11 @@ function confirmQuit() {
 $('#btn-start').click(function(e){
     //map.areasSettings.selectable = true;
     //map.validateNow();
+    
+    //set progresss bar - default
+    $('#progress-bar-initial').text("0%");
+    $('#progress-bar-initial').attr("style", "width:3%");
+    
     game.gameOn = true;
     console.log(map.areasSettings.selectable);
     $('#top-start').hide();
@@ -131,7 +143,8 @@ function quitGame(){
     $('#progress-bar').addClass("d-none");
     $('#top-menu').addClass("d-none");
     $('#question p').remove();
-    game.gameOn = false;
+    $('#question img').remove();
+    game = new Game (usStates);
     //map.areasSettings.selectable = false;
     //map.validateNow();
 }
@@ -141,10 +154,13 @@ function Game(array) {
     console.log(array);
     this.answer = '';
     this.maxQuestions = 20;
-    this.questionCounter = 14;
+    this.questionCounter = 0;
+    this.correctAnswer = 0;
+    this.incorrectAnswer = 0;
+    this.points = 0;
     this.dataArray = [];
     this.gameOn = false;
-    this.points = 0;
+    
     if (array) {
         this.dataArray = array.slice(0);
     }
@@ -155,25 +171,37 @@ function Game(array) {
 
 //update 
 
+
+
 var game = new Game(usStates);
 
 var answer = '';
 var maxQuestions = 20;
 
 function createQuestion(){
+    var ratio = Math.floor(100/game.maxQuestions);
+    game.questionCounter++;
+    $('#progress-bar-initial').text((ratio*(game.questionCounter)) + "%");
+    $('#progress-bar-initial').attr("style", "width:" + (ratio*game.questionCounter) + "%");
+    
     if(checkIfGameOver())
         return;
     restartMap();
     $('#question p').remove();
+    $('#question img').remove();
     var randomIndex = Math.floor(Math.random() * game.dataArray.length);
     game.answer = game.dataArray[randomIndex];
     $('#question').append("<p>Click on: <br>" + game.answer + "</p>");
+    $('#question').append("<img src=\"images/" + game.answer + ".jpg\" class=\"img-fluid\" alt=\"Responsive image\">");
     game.removeItem(randomIndex);
-    game.questionCounter++;
+    
 }
 
 function checkIfGameOver(){
-    if(game.maxQuestions <= game.questionCounter-1){
+    if(game.maxQuestions <= game.questionCounter-1 || game.dataArray.length === 0 ){
+        
+        console.log("Correct" + game.correctAnswer);
+        console.log("Incorrect" + game.incorrectAnswer);
         $('#question p').remove();
         restartMap();
         quitGame();
