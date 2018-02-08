@@ -61,7 +61,7 @@ var map = AmCharts.makeChart("chartdiv", {
     if(e.mapObject.enTitle.toUpperCase() === game.answer && userTry === 1){
         e.mapObject.selectedColorReal = "green";
         game.correctAnswer++;
-        $('#questions-stat').text("" + game.correctAnswer + "\/" + game.maxQuestions);
+        $('#questions-stat').text("Correct: " + game.correctAnswer + "\/" + game.maxQuestions);
         return true;
     }
     else if(e.mapObject.enTitle.toUpperCase() === correctAnswer && userTry > 1) {

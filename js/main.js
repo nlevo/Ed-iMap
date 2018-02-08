@@ -123,8 +123,9 @@ $('#btn-start').click(function(e){
     //set progresss bar - default
     $('#progress-bar-initial').text("0%");
     $('#progress-bar-initial').attr("style", "width:3%");
-    $('#questions-stat').text("" + game.correctAnswer + "\/" + game.maxQuestions);
+    $('#questions-stat').text("Correct: " + game.correctAnswer + "\/" + game.maxQuestions);
     $('.game-stats').hide();
+    $('#question').removeClass('d-none');
     
     game.gameOn = true;
     $('#top-start').hide();
@@ -147,6 +148,7 @@ function quitGame(){
     $('#question p').remove();
     $('#question img').remove();
     game = new Game (usStates);
+    $('#question').addClass('d-none');
     //map.areasSettings.selectable = false;
     //map.validateNow();
 }
