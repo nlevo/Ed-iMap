@@ -1,7 +1,57 @@
 //$(document).ready(function(){
-
+    var usStates = [
+        'ALABAMA',
+        'ALASKA',
+        'ARIZONA',
+        'ARKANSAS',
+        'CALIFORNIA',
+        'COLORADO',
+        'CONNECTICUT',
+        'DELAWARE',
+        'FLORIDA',
+        'GEORGIA',
+        'HAWAII',
+        'IDAHO',
+        'ILLINOIS',
+        'INDIANA',
+        'IOWA',
+        'KANSAS',
+        'KENTUCKY',
+        'LOUISIANA',
+        'MAINE',
+        'MARYLAND',
+        'MASSACHUSETTS',
+        'MICHIGAN',
+        'MINNESOTA',
+        'MISSISSIPPI',
+        'MISSOURI',
+        'MONTANA',
+        'NEBRASKA',
+        'NEVADA',
+        'NEW HAMPSHIRE',
+        'NEW JERSEY',
+        'NEW MEXICO',
+        'NEW YORK',
+        'NORTH CAROLINA',
+        'NORTH DAKOTA',
+        'OHIO',
+        'OKLAHOMA',
+        'OREGON',
+        'PENNSYLVANIA',
+        'RHODE ISLAND',
+        'SOUTH CAROLINA',
+        'SOUTH DAKOTA',
+        'TENNESSEE',
+        'TEXAS',
+        'UTAH',
+        'VERMONT',
+        'VIRGINIA',
+        'WASHINGTON',
+        'WEST VIRGINIA',
+        'WISCONSIN',
+        'WYOMING'
+    ]
 //enabling confirmation in javascript
-
 
 ///Rules button
 // Get the modal
@@ -60,11 +110,15 @@ function confirmQuit() {
 
 // START button event
 $('#btn-start').click(function(e){
+    //map.areasSettings.selectable = true;
+    //map.validateNow();
+    game.gameOn = true;
+    console.log(map.areasSettings.selectable);
     $('#top-start').hide();
     $('#top-info').removeClass("d-none");
     $('#progress-bar').removeClass("d-none");
     $('#top-menu').removeClass("d-none");
-    console.log(document.getElementById('top-start').childNodes[7].getElementsByClassName('btn')[0].textContent)
+    //console.log(document.getElementById('top-start').childNodes[7].getElementsByClassName('btn')[0].textContent)
     //display current game MODE in the question box
     $('#question h3').text(document.getElementById('top-start').childNodes[7].getElementsByClassName('btn')[0].textContent);    
     createQuestion();
@@ -77,76 +131,54 @@ function quitGame(){
     $('#progress-bar').addClass("d-none");
     $('#top-menu').addClass("d-none");
     $('#question p').remove();
-
+    game.gameOn = false;
+    //map.areasSettings.selectable = false;
+    //map.validateNow();
 }
 
 //CREATE A QUESTION
-function Game() {
-    this.answer = ''
+function Game(array) {
+    console.log(array);
+    this.answer = '';
     this.maxQuestions = 20;
-
+    this.questionCounter = 14;
+    this.dataArray = [];
+    this.gameOn = false;
+    this.points = 0;
+    if (array) {
+        this.dataArray = array.slice(0);
+    }
+    this.removeItem = function(index){
+        this.dataArray.splice(index, 1);
+    };
 }
-var game = new Game();
+
+//update 
+
+var game = new Game(usStates);
 
 var answer = '';
 var maxQuestions = 20;
+
 function createQuestion(){
+    if(checkIfGameOver())
+        return;
     restartMap();
     $('#question p').remove();
-    var randomIndex = Math.floor(Math.random() * usStates.length);
-    answer = usStates[randomIndex];
-    $('#question').append("<p>Click on: <br>" + answer + "</p>");
+    var randomIndex = Math.floor(Math.random() * game.dataArray.length);
+    game.answer = game.dataArray[randomIndex];
+    $('#question').append("<p>Click on: <br>" + game.answer + "</p>");
+    game.removeItem(randomIndex);
+    game.questionCounter++;
 }
 
-var usStates= [
-    'ALABAMA',
-	'ALASKA',
-    'ARIZONA',
-    'ARKANSAS',
-	'CALIFORNIA',
-	'COLORADO',
-	'CONNECTICUT',
-	'DELAWARE',
-	'FLORIDA',
-    'GEORGIA',
-    'HAWAII',
-	'IDAHO',
-	'ILLINOIS',
-	'INDIANA',
-	'IOWA',
-	'KANSAS',
-	'KENTUCKY',
-	'LOUISIANA',
-	'MAINE',
-	'MARYLAND',
-	'MASSACHUSETTS',
-	'MICHIGAN',
-	'MINNESOTA',
-	'MISSISSIPPI',
-	'MISSOURI',
-	'MONTANA',
-	'NEBRASKA',
-	'NEVADA',
-	'NEW HAMPSHIRE',
-	'NEW JERSEY',
-	'NEW MEXICO',
-	'NEW YORK',
-	'NORTH CAROLINA',
-	'NORTH DAKOTA',
-	'OHIO',
-	'OKLAHOMA',
-	'OREGON',
-	'PENNSYLVANIA',
-	'RHODE ISLAND',
-	'SOUTH CAROLINA',
-	'SOUTH DAKOTA',
-	'TENNESSEE',
-	'TEXAS',
-	'UTAH',
-	'VERMONT',
-	'VIRGINIA',
-	'WASHINGTON',
-	'WEST VIRGINIA',
-	'WISCONSIN',
-    'WYOMING'
-]
+function checkIfGameOver(){
+    if(game.maxQuestions <= game.questionCounter-1){
+        $('#question p').remove();
+        restartMap();
+        quitGame();
+        alert("Game is over");
+    }
+}
+
+

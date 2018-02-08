@@ -8,12 +8,14 @@ var map = AmCharts.makeChart("chartdiv", {
     "areasSettings": {
       "selectedColor": "#d9534f", //red color
       "selectable": true,
+      "autoZoom": false,
       "bringForwardOnHover": true,
       "color": "#74C6E5", //blue color
+      "balloonText": ""
     },
     "imagesSettings": {
         "labelPosition": "middle",
-        "labelFontSize": 8
+        "labelFontSize": 8,
       },
     "mouseWheelZoomEnabled": true,
 
@@ -27,21 +29,26 @@ var map = AmCharts.makeChart("chartdiv", {
       // Ignore any click not on area
       if (e.mapObject.objectType !== "MapArea")
         return;
-      var x = isAnswerCorrect(e);
+      
     
        // e.mapObject.selectedColorReal = selectColorBasedOnUserAnswer(e.mapObject);
       
-      var area = e.mapObject;
+      
       //console.log(area);
       
       // Toggle showAsSelected
-      area.showAsSelected = !area.showAsSelected;
-      e.chart.returnInitialColor(area);
-      console.log(area);
+      if(game.gameOn){
+        var x = isAnswerCorrect(e);
+        var area = e.mapObject;
+        area.showAsSelected = !area.showAsSelected;
+        e.chart.returnInitialColor(area);
+        console.log(area);
+        setTimeout(createQuestion, 500);
+       }
       
       // Update the list
       //document.getElementById("selected").innerHTML = JSON.stringify(getSelectedCountries());
-      setTimeout(createQuestion(), 2000);
+      
     }
   }]
 });
@@ -52,8 +59,8 @@ var map = AmCharts.makeChart("chartdiv", {
  */
 
  function isAnswerCorrect(e){
-    if(e.mapObject.enTitle.toUpperCase() === answer && userTry === 1){
-        e.mapObject.selectedColorReal = "green"; 
+    if(e.mapObject.enTitle.toUpperCase() === game.answer && userTry === 1){
+        e.mapObject.selectedColorReal = "green";
         return true;
     }
     else if(e.mapObject.enTitle.toUpperCase() === correctAnswer && userTry > 1) {
