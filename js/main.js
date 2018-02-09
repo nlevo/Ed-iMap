@@ -115,6 +115,14 @@ function confirmQuit() {
         quitGame();
 }
 
+//Tip button
+$('#tip').click(function(e){
+    console.log($('question').childNodes);
+    if(game.gameOn && game.gameMode.localeCompare("Quiz - Landmarks") === 0 && game.tip > 0)
+    $('#question').append("<h4>" + game.answer[0] + game.answer[1] + "</h4>");
+    game.tip--;
+})
+
 // START button event
 $('#btn-start').click(function(e){
     //map.areasSettings.selectable = true;
@@ -135,6 +143,30 @@ $('#btn-start').click(function(e){
         return;
     }
 
+    //Set game difficulty
+    game = new Game(usStates);
+    
+
+    //Set game mode
+    if(($('#mode').text().localeCompare('Quiz - States') === 0)){
+        game.gameMode = "Quiz - States";
+    }
+    else if(($('#mode').text().localeCompare('Quiz - Landmarks') === 0)){
+        game.gameMode = "Quiz - Landmarks";
+    }
+    else if(($('#mode').text().localeCompare('Quiz - Music') === 0)){
+        game.gameMode = "Quiz - Music";
+    }
+
+    //Set map
+    if(($('#map').text().localeCompare('USA Map') === 0)){
+        game.map = "USA Map";
+    }
+    else if(($('#map').text().localeCompare('World Map') === 0)){
+        game.map = "World Map";
+    }
+
+
     $('#progress-bar-initial').text("0%");
     $('#progress-bar-initial').attr("style", "width:3%");
     $('#questions-stat').text("Correct: " + game.correctAnswer + "\/" + game.maxQuestions);
@@ -148,9 +180,23 @@ $('#btn-start').click(function(e){
     $('#top-menu').removeClass("d-none");
     //console.log(document.getElementById('top-start').childNodes[7].getElementsByClassName('btn')[0].textContent)
     //display current game MODE in the question box
-    $('#question h3').text(document.getElementById('top-start').childNodes[7].getElementsByClassName('btn')[0].textContent);    
-    createQuestion();
+    //$('#question h3').text(document.getElementById('top-start').childNodes[7].getElementsByClassName('btn')[0].textContent);    
+    
     setStartBtn();
+
+    if($('#diff').text().localeCompare('Easy') === 0){
+        game.difficulty = "Easy";
+        balloonTextOn();
+    }
+    else if($('#diff').text().localeCompare('Normal') === 0){
+        game.difficulty = "Normal";
+        balloonTextOff();
+    }
+    else if($('#diff').text().localeCompare('Hard') === 0){
+        game.difficulty = "Hard";
+        balloonTextOff();
+    }
+    createQuestion();
     
 })
 // QUIT button event
@@ -180,6 +226,10 @@ function Game(array) {
     this.skippedQuestions = 0;
     this.intervalId = 0;
     this.currentTime = 0;
+    this.gameMode = "";
+    this.difficulty = "";
+    this.map = "";
+    this.tip = 3;
 
     if (array) {
         this.dataArray = array.slice(0);
@@ -191,11 +241,18 @@ function Game(array) {
 
 
 //update 
-
-var game = new Game(usStates);
+var game;
+//var game = new Game(usStates);
 var onOff;
+var countDown;
 
 function createQuestion(){
+    if($('#diff').text().localeCompare('Hard') === 0){
+        setStopBtn();
+        setCountDown();
+        setCountDownBtn();
+    }
+    
     var ratio = Math.floor(100/game.maxQuestions);
     game.questionCounter++;
     $('#progress-bar-initial').text((ratio*(game.questionCounter)) + "%");
@@ -206,26 +263,52 @@ function createQuestion(){
     restartMap();
     $('#question p').remove();
     $('#question img').remove();
+    $('#question h4').remove();
     var randomIndex = Math.floor(Math.random() * game.dataArray.length);
     game.answer = game.dataArray[randomIndex];
-    $('#question').append("<p>Click on: <br>" + game.answer + "</p>");
-    $('#question').append("<img src=\"images/" + game.answer + ".jpg\" class=\"img-fluid\" alt=\"Responsive image\">");
+    if(($('#mode').text().localeCompare('Quiz - States') === 0)){
+        $('#question').append("<p>Click on: <br>" + game.answer + "</p>");
+        $('#question').append("<img src=\"images/" + game.answer + ".jpg\" class=\"img-fluid\" alt=\"Responsive image\">");
+    }
+    else if(($('#mode').text().localeCompare('Quiz - Landmarks') === 0)){
+        var title = usPictures[game.answer][0];
+        var shortDecription = usPictures[game.answer][1];
+        $('#question').append("<h4>" + title + "</h4>");
+        $('#question').append("<p>" + shortDecription + "</p>");
+        $('#question').append("<img src=\"images/us-pictures/jpg/" + game.answer + ".jpg\" class=\"img-fluid\" alt=\"Responsive image\">");
+    }
     game.removeItem(randomIndex);
-    
+    if($('#diff').text().localeCompare('Easy') === 0){
+        balloonTextOn();
+    }
 }
 
 function checkIfGameOver(){
     if(game.maxQuestions <= game.questionCounter-1 || game.dataArray.length === 0 ){
-        $('.game-stats').show();
+        endGame();
+    }
+}
+
+function endGame () {
+    $('.game-stats').show();
         var ratio = (100/(game.maxQuestions+game.skippedQuestions)).toFixed(2);
         game.stopClick();
         setStopBtn();
         //update final stats bars
-        $('#correct').text("Correct " + (ratio*(game.correctAnswer)).toFixed(2) + "%");
+        if(game.correctAnswer < 3)
+            $('#correct').text("" + (ratio*(game.correctAnswer)).toFixed(2) + "%"); 
+        else
+            $('#correct').text("Correct " + (ratio*(game.correctAnswer)).toFixed(2) + "%");  
         $('#correct').attr("style", "width:" + (ratio*game.correctAnswer).toFixed(2) + "%");
-        $('#skipped').text("Skipped " + (ratio*(game.skippedQuestions)).toFixed(2) + "%");
+        if(game.skippedQuestions < 3)
+            $('#skipped').text("" + (ratio*(game.skippedQuestions)).toFixed(2) + "%");
+        else
+            $('#skipped').text("Skipped " + (ratio*(game.skippedQuestions)).toFixed(2) + "%");
         $('#skipped').attr("style", "width:" + (ratio*game.skippedQuestions).toFixed(2) + "%");
-        $('#incorrect').text("Incorrect " + (ratio*(game.incorrectAnswer)).toFixed(2) + "%");
+        if(game.incorrectAnswer < 3)
+            $('#incorrect').text("" + (ratio*(game.incorrectAnswer)).toFixed(2) + "%");
+        else    
+            $('#incorrect').text("Incorrect " + (ratio*(game.incorrectAnswer)).toFixed(2) + "%");
         $('#incorrect').attr("style", "width:" + (ratio*game.incorrectAnswer).toFixed(2) + "%");
         
         //hide progress bar
@@ -235,8 +318,9 @@ function checkIfGameOver(){
         restartMap();
         //quitGame();
         //alert("Game is over");
-    }
+        game.gameOn = false;
 }
+
 
 // Constructor prototype
 
@@ -244,6 +328,14 @@ Game.prototype.startClick = function () {
     var that = this;
     this.intervalId = setInterval(function () {
         that.currentTime ++;
+      }, 1000);
+};
+
+Game.prototype.countDown = function () {
+    var that = this;
+    this.currentTime = 7;
+    this.intervalId = setInterval(function () {
+        that.currentTime --;
       }, 1000);
 };
 
@@ -292,3 +384,30 @@ function setStartBtn() {
         printTime();
       }, 10);
 };
+
+function setCountDownBtn() {
+    game.countDown();
+    onOff = setInterval(function () {
+        printTime();
+      }, 10);
+};
+
+function balloonTextOn () {
+    map.dataProvider.areas.forEach(function (state){
+        state.balloonTextReal = state.enTitle;
+    })
+}
+
+function balloonTextOff () {
+    map.dataProvider.areas.forEach(function (state){
+        state.balloonTextReal = "";
+    })
+}
+
+function setCountDown(){ 
+    countDown = setTimeout(function(){ 
+        game.stopClick(); 
+        endGame();
+    }, 7000);
+}
+

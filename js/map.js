@@ -42,6 +42,7 @@ var map = AmCharts.makeChart("chartdiv", {
         var area = e.mapObject;
         area.showAsSelected = !area.showAsSelected;
         e.chart.returnInitialColor(area);
+        $('#question').append("<h4>" + game.answer + "</h4>");
         setTimeout(createQuestion, 500);
        }
       
@@ -62,15 +63,18 @@ var map = AmCharts.makeChart("chartdiv", {
         e.mapObject.selectedColorReal = "green";
         game.correctAnswer++;
         $('#questions-stat').text("Correct: " + game.correctAnswer + "\/" + game.maxQuestions);
+        clearTimeout(countDown);
         return true;
     }
     else if(e.mapObject.enTitle.toUpperCase() === correctAnswer && userTry > 1) {
         e.mapObject.selectedColorReal = "yellow";
+        clearTimeout(countDown);
         return true;
     }
     else {
         e.mapObject.selectedColorReal = "red";
         game.incorrectAnswer++;
+        clearTimeout(countDown);
         return false;
     } 
  }
