@@ -62,7 +62,7 @@
 			<div id="time" class="col-lg-2">Time: 00:00 sec</div>
 			<!-- <div class="col-lg-2">Points:</div> -->
 			<div id="questions-stat" class="col-lg-2">10/20</div>
-			<div class="col-lg-2"></div>
+			<div id="tip-value" class="col-lg-2"></div>
 			<div class="col-lg-4"></div>
 			<button id="btn-quit" class="btn btn-danger col-lg-1 float-right" onclick="confirmQuit()" data-toggle="confirmation">QUIT</button>
 			<!-- <button class="btn btn-default" data-toggle="confirmation" data-original-title="Test" >Confirmation</button> -->
@@ -82,10 +82,10 @@
 				<button  id="skip" class="col-lg-2" onclick="this.blur();">Skip the QUESTION</button>
 			<!-- <div  id="skip" class="col-lg-2">Skip the QUESTION</div> -->
 			<div id="tip" class="col-lg-2">Use a TIP<span class="glyphicon glyphicon-info-sign"></span></div>
-			<div class="col-lg-2">Try 1/3</div>
+			<div id="try" class="col-lg-2">Try 1/3</div>
 		</div>
 		<div id="test" class="row pt-4 pl-5 mt-4">
-			<div id="question" class="col-lg-4 text-center p-4 d-none">
+			<div id="question" class="col-lg-4 text-center pl-4 pr-4 pb-2 d-none">
 				<h3 class="text-primary mb-4" > 
 					<!-- <h4 class="text-left">
 						&#9312 Choose Your Difficulty <br> (easy, normal or hard)<br>
@@ -98,6 +98,9 @@
 					</h3>
 			</div>
 			<div id="chartdiv" class="col-lg-8" ></div>
+			</div>
+			<div class="row">
+				<div class="col-lg-12 pr-5 pt-5 text-right">ED iMap by Nicolas Levo <br> Ver. 1.0 (2018)</div>
 			</div>
 		</div>
 	

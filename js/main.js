@@ -117,10 +117,14 @@ function confirmQuit() {
 
 //Tip button
 $('#tip').click(function(e){
-    console.log($('question').childNodes);
-    if(game.gameOn && game.gameMode.localeCompare("Quiz - Landmarks") === 0 && game.tip > 0)
-    $('#question').append("<h4>" + game.answer[0] + game.answer[1] + "</h4>");
-    game.tip--;
+    if($('#question').find("h4").length < 2){
+        if(game.gameOn && game.gameMode.localeCompare("Quiz - Landmarks") === 0 && game.tip <= 3){
+        //$('#question').append("<h4 class=\"pt-1\">The first 2 letters are: " + game.answer[0] + game.answer[1] + "</h4>");
+        $('#tip-value').text("The first 2 letters are: " + game.answer[0] + game.answer[1]);
+        $('#try').text("Try " + game.tip + "\/3");
+        game.tip++;
+        }
+    }
 })
 
 // START button event
@@ -229,7 +233,7 @@ function Game(array) {
     this.gameMode = "";
     this.difficulty = "";
     this.map = "";
-    this.tip = 3;
+    this.tip = 1;
 
     if (array) {
         this.dataArray = array.slice(0);
@@ -252,7 +256,7 @@ function createQuestion(){
         setCountDown();
         setCountDownBtn();
     }
-    
+    $('#tip-value').text("");
     var ratio = Math.floor(100/game.maxQuestions);
     game.questionCounter++;
     $('#progress-bar-initial').text((ratio*(game.questionCounter)) + "%");

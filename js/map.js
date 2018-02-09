@@ -42,7 +42,7 @@ var map = AmCharts.makeChart("chartdiv", {
         var area = e.mapObject;
         area.showAsSelected = !area.showAsSelected;
         e.chart.returnInitialColor(area);
-        $('#question').append("<h4>" + game.answer + "</h4>");
+        $('#question').append("<h4 class=\"pt-2\">" + game.answer + "</h4>");
         setTimeout(createQuestion, 500);
        }
       
