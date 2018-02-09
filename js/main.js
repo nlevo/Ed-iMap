@@ -121,6 +121,20 @@ $('#btn-start').click(function(e){
     //map.validateNow();
     
     //set progresss bar - default
+    
+    if(($('#diff').text().includes('Choose DIFFICULTY'))){
+        alert('Please choose the game DIFFICULTY!');
+        return;
+    }
+    else if(($('#mode').text().includes('Choose MODE'))){
+        alert('Please choose the game MODE!');
+        return;
+    }
+    else if(($('#map').text().includes('Choose MAP'))){
+        alert('Please choose the game MAP!');
+        return;
+    }
+
     $('#progress-bar-initial').text("0%");
     $('#progress-bar-initial').attr("style", "width:3%");
     $('#questions-stat').text("Correct: " + game.correctAnswer + "\/" + game.maxQuestions);
